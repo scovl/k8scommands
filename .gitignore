@@ -1,1 +1,7 @@
 .vscode
+/target/
+.DS_Store
+**/.DS_Store
+**/.project
+**/.classpath
+**/.settings
