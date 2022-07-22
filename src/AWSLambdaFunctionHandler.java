@@ -1,12 +1,15 @@
-package com.example.awslambdafunctionhandler;
-
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.example.app.App;
 import com.example.download.Download;
 
 // Handler is a class that implements the Lambda function handler interface
 public class AWSLambdaFunctionHandler {
     public String lambdaHandler(String[] args, Context context) {
+
+        // lambda logger
+        LambdaLogger logger = context.getLogger();
+
         // check if file exists in the directory
         String fileName = "/usr/bin/kubectl";
         if (Download.fileExists(fileName)) {
