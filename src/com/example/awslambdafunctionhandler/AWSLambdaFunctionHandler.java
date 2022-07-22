@@ -6,7 +6,7 @@ import com.example.download.Download;
 
 // Handler is a class that implements the Lambda function handler interface
 public class AWSLambdaFunctionHandler {
-    public String lambdaHandler(String input, Context context) {
+    public String lambdaHandler(String[] args, Context context) {
         // check if file exists in the directory
         String fileName = "/usr/bin/kubectl";
         if (Download.fileExists(fileName)) {
