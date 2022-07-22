@@ -9,7 +9,7 @@ public class Download {
 
     // download file by url
     public static void downloadFile(String fileName, String url) {
-        String command = new StringBuffer.append("curl -o").append(fileName).append(" ").append(url).toString();
+        String command = new StringBuffer.append("curl -s -o").append(fileName).append(" ").append(url).toString();
         try {
             Process process = Runtime.getRuntime().exec(command);
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
