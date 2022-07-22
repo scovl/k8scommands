@@ -3,9 +3,11 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.example.app.App;
 import com.example.download.Download;
 
+// eks authorization cluster
+
 // Handler is a class that implements the Lambda function handler interface
 public class AWSLambdaFunctionHandler {
-    public String lambdaHandler(String[] args, Context context) {
+    public String handleRequest(String input, Context context) {
 
         // lambda logger
         LambdaLogger logger = context.getLogger();
