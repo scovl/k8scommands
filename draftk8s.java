@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class main {
@@ -10,37 +11,57 @@ public class main {
         String region = "sa-east-1";
         String roleName = "test-role";
 
-        // execute the command line: aws sts assume-role --role-arn arn:aws:iam:accountId:role/roleName --role-session-name eks-kubectl-session-name
-        String assume_role_cmd = "aws sts assume-role --role-arn arn:aws:iam:accountId:role/roleName --role-session-name eks-kubectl-session-name";
-        Runtime run = Runtime.getRuntime();
-        Process p = run.exec(assume_role_cmd);
-        p.waitFor();
-        BufferedReader buf = new BufferedReader(new InputStreamReader(p.getInputStream));
-        
+        // execute the command line: assume-role --role-arn arn:aws:iam:accountId:role/roleName --role-session-name eks-kubectl-session-name
 
 
-        // execute the command line: aws sts get-caller-identity
-        String get_caller_identity_cmd = "aws sts get-caller-identity";
+        String[] ekscmd = new String[]{
+                "aws sts assume-role --role-arn arn:aws:iam:" + accountId + ":role/" + roleName + " --role-session-name eks-kubectl-session-name",
+                "aws sts get-caller-identity",
+                "aws eks --region" + region + "update-kubeconfig --name " + clusterName
+        };
 
-        // execute the command line: aws eks --region region update-kubeconfig --name clusterName
-        String update_kubeconfig_cmd = "aws eks --region region update-kubeconfig --name " + clusterName;
+        // Runtime exec three commands in ekscmd
+        for (String cmd : ekscmd) {
+            try {
+                Process process = Runtime.getRuntime().exec(cmd);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+                process.waitFor();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
-        // execute the command line: kubectl get -n namespace -o json | jq .status.phase -r
+
         String get_namespace_cmd = "kubectl get -n " + namespace + " -o json | jq.status.phase -r";
 
+        // runtime exec get_namespace_cmd
+        try {
+            Process process = Runtime.getRuntime().exec(get_namespace_cmd);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-
-        // if get_namespace_cmd == "Active", then return 1
-        if (get_namespace_cmd == "Active") {
-            return 1;
-        } else {
-            return 0;
+            // if get_namespace_cmd return "Active", then return get_namespace_cmd
+            if (reader.readLine().equals("Active")) {
+                // print reader.readLine()
+                System.out.println(reader.readLine());
+                return 1;
+            } else {
+                System.out.println(reader.readLine());
+                return 0;
             }
 
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
 
-
+        return 0;
     }
-
-
-
 }
